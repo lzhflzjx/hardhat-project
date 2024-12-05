@@ -6,6 +6,7 @@
 const hre = require("hardhat");
 
 async function main() {
+    console.log('23333', 23333)
     // Hardhat always runs the compile task when running scripts with its command
     // line interface.
     //
