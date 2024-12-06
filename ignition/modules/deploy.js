@@ -17,10 +17,10 @@ async function main() {
     // await hre.run('compile');
 
     // We get the contract to deploy
-    const Greeter = await hre.ethers.getContractFactory("Greeter");
+    const Greeter = await hre.ethers.getContractFactory("FundMe");
     const greeter = await Greeter.deploy("Hello, Hardhat!");
 
-    await greeter.waitFordeployment();
+    await greeter.waitForDeployment();
 
     console.log("Greeter deployed to:", greeter.address);
 }
@@ -28,8 +28,8 @@ async function main() {
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()
-// .then(() => process.exit(0))
-// .catch(error => {
-//     console.error(error);
-//     process.exit(1);
-// });
+.then(() => process.exit(0))
+.catch(error => {
+    console.error(error);
+    process.exit(1);
+});
