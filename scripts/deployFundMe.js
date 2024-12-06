@@ -1,11 +1,8 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional 
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
-// const hre = require("hardhat");
-import hre from "hardhat";
-import "@nomicfoundation/hardhat-ignition";
+// import ethers.js
+// create main function
+// execute main function
+
+const { ethers } = require("hardhat")
 
 async function main() {
     console.log('23333', 23333)
@@ -28,8 +25,8 @@ async function main() {
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()
-.then(() => process.exit(0))
-.catch(error => {
-    console.error(error);
-    process.exit(1);
-});
+    .then(() => process.exit(0))
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+    });
