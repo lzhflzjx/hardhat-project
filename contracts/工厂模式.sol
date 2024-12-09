@@ -2,18 +2,13 @@
 pragma solidity ^0.8.7; //^所有高于这个版本的都可以编译
 
 import {HelloWorld} from "./基本方法查改算.sol";
-
 contract HelloWorldFactory {
     HelloWorld hw;
-
     HelloWorld[] hws;
-
     function createHelloWorld() public {
         hw = new HelloWorld();
-
         hws.push(hw);
     }
-
     function getHelloWorldByIndex(uint256 _index)
         public
         view
@@ -21,7 +16,6 @@ contract HelloWorldFactory {
     {
         return hws[_index];
     }
-
     function callSayHelloFromFactory(uint256 _index, uint256 _id)
         public
         view
@@ -29,7 +23,6 @@ contract HelloWorldFactory {
     {
         return hws[_index].sayHello(_id);
     }
-
     function calSetHelloWorldFromFactory(
         uint256 _index,
         string memory newString,
