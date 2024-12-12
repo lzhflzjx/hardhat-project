@@ -13,17 +13,37 @@ contract FundMe {
     uint256 constant TARGET = 100 * 10**18;
 
     address public owner;
+    // 时间锁
+    // 开始锁定的时间
+    uint256 deploymentTimestamp;
+    // 锁定时长
+    uint256 lockTime;
 
-    constructor() {
+    address erc20Addr;
+    // 查看getFuncd是否成功了
+    bool public getFundSuccess = false;
+
+    constructor(uint256 _lockTime) {
         // sepolia-testnet
         dataFeed = AggregatorV3Interface(
             0x694AA1769357215DE4FAC081bf1f309aDC325306
         );
         owner = msg.sender;
+        // 当前区块的开始时间
+        deploymentTimestamp = block.timestamp;
+        // 用户输入的锁定时长
+        lockTime = _lockTime;
     }
 
-    // 1.创建一个收款函数
+    /**
+    1.创建一个收款函数
+    */
     function fund() external payable {
+        //  收款函数可执行时机必须小于deploymentTimestamp+lockTime
+        require(
+            block.timestamp < deploymentTimestamp + lockTime,
+            "window is closed"
+        );
         // payable：收款关键字
         require(convertEthToUsd(msg.value) >= MINMUM_VALUE, "send more ETH");
         // 2.记录一个投资人并且查看
@@ -56,27 +76,15 @@ contract FundMe {
         return (ethAmount * ethPrice) / (10**8);
     }
 
-    function transferOwnerShip(address newOwner) public {
-        require(
-            msg.sender == owner,
-            "this function can only be called by owner"
-        );
+    function transferOwnerShip(address newOwner) public onlyOwner{
         owner = newOwner;
-        require(
-            convertEthToUsd(address(this).balance) >= TARGET,
-            "target is not reached"
-        );
     }
 
     // 3.在锁定期内达到目标值，生产可以提款
-    function getFund() external {
+    function getFund() external windowClosed onlyOwner{
         require(
             convertEthToUsd(address(this).balance) >= TARGET,
             "target is not reached"
-        );
-        require(
-            msg.sender == owner,
-            "this function can only be called by owner"
         );
         //  transfer 纯转账 transfer ETH  and revert if tx failed
         // payable(msg.sender).transfer(address(this).balance);
@@ -91,10 +99,12 @@ contract FundMe {
         require(success, "transfer tx failed");
 
         funderToAmount[msg.sender] = 0;
+        // 提款成功了
+        getFundSuccess = true;
     }
 
     // 4.在锁定期内没有达到目标值，投资人可以退款
-    function reFund() external {
+    function reFund() external windowClosed {
         require(
             convertEthToUsd(address(this).balance) < TARGET,
             "target is reached"
@@ -110,5 +120,31 @@ contract FundMe {
 
         // 安全问题：退款后将余额置为0
         funderToAmount[msg.sender] = 0;
+    }
+    // 修改mapping--funderToAmount的地址且仅Erc20有权限
+    function setFunderToAmount(address funder,uint256 amountToUpdate) external {
+        require(msg.sender == erc20Addr,"you do not have permission to call this function");
+        funderToAmount[funder] = amountToUpdate;
+    }
+
+    function setErc20Addr(address _erc20Addr) public onlyOwner{
+        erc20Addr = _erc20Addr;
+    }
+    // 修改器
+    modifier windowClosed() {
+        // 窗口关闭后才可提款
+        require(
+            block.timestamp >= deploymentTimestamp + lockTime,
+            "window is not closed"
+        );
+        _; //下划线在require下面,表示先执行判断再执行后续代码
+    }
+
+    modifier onlyOwner() {
+        require(
+            msg.sender == owner,
+            "this function can only be called by owner"
+        );
+        _;
     }
 }
