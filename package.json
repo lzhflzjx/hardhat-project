@@ -13,8 +13,8 @@
     "@chainlink/contracts": "^1.0.0",
     "@chainlink/env-enc": "^1.0.5",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "dotenv": "^16.4.5",
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "dotenv": "^16.4.7",
     "hardhat": "^2.22.2"
   }
 }
