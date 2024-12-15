@@ -14,7 +14,9 @@
     "@chainlink/env-enc": "^1.0.5",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.12",
     "dotenv": "^16.4.7",
-    "hardhat": "^2.22.2"
+    "hardhat": "^2.22.2",
+    "undici": "^7.1.0"
   }
 }
