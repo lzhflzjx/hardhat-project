@@ -1,6 +1,11 @@
 import type { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition";
+
+// task
+require("./tasks")
+
+
 require("@chainlink/env-enc").config()
 // require("dotenv").config()
 

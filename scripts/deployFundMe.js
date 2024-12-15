@@ -5,7 +5,6 @@
 const { ethers } = require("hardhat")
 
 async function main() {
-    console.log('23333', 23333)
     // create factory
     const fundMeFactory = await ethers.getContractFactory("FundMe");
     console.log('contract deploying')
