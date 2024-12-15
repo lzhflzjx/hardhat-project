@@ -2,6 +2,7 @@ import type { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition";
 require("@chainlink/env-enc").config()
+// require("dotenv").config()
 
 const privateKey1 = process.env.PRIVATE_KEY as string
 const url1 = process.env.SEPOLIA_URL//免费第三方服务商：Alchemy，Infura，QuickNode
