@@ -6,11 +6,11 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 contract FundMe {
     mapping(address => uint256) public funderToAmount;
 
-    uint256 MINMUM_VALUE = 10 * 10**18; //限定收款最小值 wei
+    uint256 MINMUM_VALUE = 10 * 10 ** 18; //限定收款最小值 wei
 
     AggregatorV3Interface internal dataFeed;
 
-    uint256 constant TARGET = 100 * 10**18;
+    uint256 constant TARGET = 100 * 10 ** 18;
 
     address public owner;
     // 时间锁
@@ -23,11 +23,9 @@ contract FundMe {
     // 查看getFuncd是否成功了
     bool public getFundSuccess = false;
 
-    constructor(uint256 _lockTime) {
-        // sepolia-testnet
-        dataFeed = AggregatorV3Interface(
-            0x694AA1769357215DE4FAC081bf1f309aDC325306
-        );
+    constructor(uint256 _lockTime, address dataFeedAddr) {
+        // sepolia-testnet -- 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        dataFeed = AggregatorV3Interface(dataFeedAddr);
         owner = msg.sender;
         // 当前区块的开始时间
         deploymentTimestamp = block.timestamp;
@@ -65,23 +63,21 @@ contract FundMe {
         return answer;
     }
 
-    function convertEthToUsd(uint256 ethAmount)
-        internal
-        view
-        returns (uint256)
-    {
+    function convertEthToUsd(
+        uint256 ethAmount
+    ) internal view returns (uint256) {
         // (ETH amount) * (ETH price) = (ETH value)
         uint256 ethPrice = uint256(getChainlinkDataFeedLatestAnswer());
         // ethAmount 单位是wei； ethPrice的精确度 precision 10**8
-        return (ethAmount * ethPrice) / (10**8);
+        return (ethAmount * ethPrice) / (10 ** 8);
     }
 
-    function transferOwnerShip(address newOwner) public onlyOwner{
+    function transferOwnerShip(address newOwner) public onlyOwner {
         owner = newOwner;
     }
 
     // 3.在锁定期内达到目标值，生产可以提款
-    function getFund() external windowClosed onlyOwner{
+    function getFund() external windowClosed onlyOwner {
         require(
             convertEthToUsd(address(this).balance) >= TARGET,
             "target is not reached"
@@ -121,15 +117,23 @@ contract FundMe {
         // 安全问题：退款后将余额置为0
         funderToAmount[msg.sender] = 0;
     }
+
     // 修改mapping--funderToAmount的地址且仅Erc20有权限
-    function setFunderToAmount(address funder,uint256 amountToUpdate) external {
-        require(msg.sender == erc20Addr,"you do not have permission to call this function");
+    function setFunderToAmount(
+        address funder,
+        uint256 amountToUpdate
+    ) external {
+        require(
+            msg.sender == erc20Addr,
+            "you do not have permission to call this function"
+        );
         funderToAmount[funder] = amountToUpdate;
     }
 
-    function setErc20Addr(address _erc20Addr) public onlyOwner{
+    function setErc20Addr(address _erc20Addr) public onlyOwner {
         erc20Addr = _erc20Addr;
     }
+
     // 修改器
     modifier windowClosed() {
         // 窗口关闭后才可提款
