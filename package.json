@@ -17,6 +17,7 @@
     "@nomicfoundation/hardhat-verify": "^2.0.12",
     "dotenv": "^16.4.7",
     "hardhat": "^2.22.2",
+    "hardhat-deploy": "^0.14.0",
     "undici": "^7.1.0"
   }
 }
