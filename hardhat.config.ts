@@ -1,7 +1,7 @@
-import type { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition";
 
+require('hardhat-deploy')
 // task
 require("./tasks")
 
@@ -18,7 +18,7 @@ const privateKey2 = process.env.PRIVATE_KEY_2 as string
 const url1 = process.env.SEPOLIA_URL//免费第三方服务商：Alchemy，Infura，QuickNode
 const etherToekn1:any = process.env.ETHERSCAN_API_KEY//以太坊浏览器token
 
-const config: HardhatUserConfig = {
+const config = {
   solidity: "0.8.28",
   // defaultNetwork: "rinkeby",
   networks: {
@@ -33,7 +33,15 @@ const config: HardhatUserConfig = {
     apiKey: {
       sepolia: etherToekn1//from-以太坊浏览器 https://etherscan.io/myapikey
     }
-  }
+  },
+  namedAccounts: {
+    firstAccount: {
+      default: 0
+    },
+    secondAccount: {
+      default: 1
+    },
+  },
 };
 
 export default config;
