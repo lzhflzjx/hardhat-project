@@ -8,7 +8,8 @@ contract FundMe {
 
     uint256 MINMUM_VALUE = 10 * 10 ** 18; //限定收款最小值 wei
 
-    AggregatorV3Interface internal dataFeed;
+    // AggregatorV3Interface internal dataFeed;
+    AggregatorV3Interface public dataFeed;//先改成public
 
     uint256 constant TARGET = 100 * 10 ** 18;
 

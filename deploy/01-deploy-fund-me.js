@@ -7,7 +7,7 @@ module.exports= async({getNamedAccounts, deployments}) => {
     
     let dataFeedAddr
     let confirmations
-    if(devlopmentChains.includes(network.name)) {
+    if(devlopmentChains.includes(network.name)) {//如果是本地网络
         const mockV3Aggregator = await deployments.get("MockV3Aggregator")    
         dataFeedAddr = mockV3Aggregator.address
         confirmations = 0
