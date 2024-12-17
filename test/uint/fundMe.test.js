@@ -8,20 +8,22 @@ describe("test fundme contract", async function () {
     let firstAccount
     let secondAccount
     let mockV3Aggregator
-    beforeEach(async function() {
+    beforeEach(async function () {
         await deployments.fixture(["all"])
         firstAccount = (await getNamedAccounts()).firstAccount
+        secondAccount = (await getNamedAccounts()).secondAccount
         const fundMeDeployment = await deployments.get("FundMe")
         mockV3Aggregator = await deployments.get("MockV3Aggregator")
         fundMe = await ethers.getContractAt("FundMe", fundMeDeployment.address)
+        fundMeSecondAccount = await ethers.getContract("FundMe", secondAccount)
     })
-    
-    it("test if the owner is msg.sender", async function() {
+
+    it("test if the owner is msg.sender", async function () {
         await fundMe.waitForDeployment()
         assert.equal((await fundMe.owner()), firstAccount)
     })
 
-    it("test if the datafeed is assigned correctly", async function() {
+    it("test if the datafeed is assigned correctly", async function () {
         await fundMe.waitForDeployment()
         assert.equal((await fundMe.dataFeed()), mockV3Aggregator.address)
     })
@@ -37,6 +39,38 @@ describe("test fundme contract", async function () {
             //value is greater minimum value
             expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
                 .to.be.revertedWith("window is closed")
+        }
+    )
+
+    it("window open, value is less than minimum, fund failed",
+        async function () {
+            await expect(fundMe.fund({ value: ethers.parseEther("0.001") }))
+                .to.be.revertedWith("send more ETH")
+        }
+    )
+
+    it("Window open, value is greater minimum, fund success",
+        async function () {
+            // greater than minimum
+            await fundMe.fund({ value: ethers.parseEther("0.1") })
+            const balance = await fundMe.funderToAmount(firstAccount)
+            expect(balance).to.equal(ethers.parseEther("0.1"))
+        }
+    )
+
+    // unit test for getFund
+    // onlyOwner, windowClose, target reached
+    it("not onwer, window closed, target reached, getFund failed",
+        async function () {
+            // make sure the target is reached 
+            await fundMe.fund({ value: ethers.parseEther("1") })
+
+            // make sure the window is closed
+            await helpers.time.increase(200)
+            await helpers.mine()
+
+            await expect(fundMeSecondAccount.getFund())
+                .to.be.revertedWith("this function can only be called by owner")
         }
     )
 })

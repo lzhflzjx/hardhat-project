@@ -1,13 +1,17 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition";
 
-require('hardhat-deploy')
+require("@chainlink/env-enc").config()
+// require("dotenv").config()
+
 // task
 require("./tasks")
 
+require("@nomicfoundation/hardhat-ethers");
+require("hardhat-deploy");
+require("hardhat-deploy-ethers");
 
-require("@chainlink/env-enc").config()
-// require("dotenv").config()
+
 
 const { ProxyAgent, setGlobalDispatcher } = require("undici");
 const proxyAgent = new ProxyAgent("http://127.0.0.1:29290");
