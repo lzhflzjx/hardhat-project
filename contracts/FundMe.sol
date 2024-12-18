@@ -9,7 +9,7 @@ contract FundMe {
     uint256 MINMUM_VALUE = 10 * 10 ** 18; //限定收款最小值 wei
 
     // AggregatorV3Interface internal dataFeed;
-    AggregatorV3Interface public dataFeed;//先改成public
+    AggregatorV3Interface public dataFeed; //先改成public
 
     uint256 constant TARGET = 100 * 10 ** 18;
 
@@ -82,10 +82,8 @@ contract FundMe {
 
     // 3.在锁定期内达到目标值，生产可以提款
     function getFund() external windowClosed onlyOwner {
-        require(
-            convertEthToUsd(address(this).balance) >= TARGET,
-            "Target is not reached"
-        );
+        uint256 balance = address(this).balance;
+        require(convertEthToUsd(balance) >= TARGET, "Target is not reached");
         //  transfer 纯转账 transfer ETH  and revert if tx failed
         // payable(msg.sender).transfer(address(this).balance);
         // send  纯转账 transfer ETH  and return false if failed
@@ -93,10 +91,7 @@ contract FundMe {
         // require(success, "tx failed");
         // call transfer ETH  with data return value of function and bool
         bool success;
-        uint256 balance = address(this).balance;
-        (success, ) = payable(msg.sender).call{value: balance}(
-            ""
-        );
+        (success, ) = payable(msg.sender).call{value: balance}("");
         require(success, "transfer tx failed");
 
         funderToAmount[msg.sender] = 0;
