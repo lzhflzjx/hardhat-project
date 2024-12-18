@@ -24,6 +24,9 @@ contract FundMe {
     // 查看getFuncd是否成功了
     bool public getFundSuccess = false;
 
+    event FundWithdrawByOwner(uint256);
+    event RefundByFunder(address, uint256);
+
     constructor(uint256 _lockTime, address dataFeedAddr) {
         // sepolia-testnet -- 0x694AA1769357215DE4FAC081bf1f309aDC325306
         dataFeed = AggregatorV3Interface(dataFeedAddr);
@@ -81,7 +84,7 @@ contract FundMe {
     function getFund() external windowClosed onlyOwner {
         require(
             convertEthToUsd(address(this).balance) >= TARGET,
-            "target is not reached"
+            "Target is not reached"
         );
         //  transfer 纯转账 transfer ETH  and revert if tx failed
         // payable(msg.sender).transfer(address(this).balance);
@@ -90,7 +93,8 @@ contract FundMe {
         // require(success, "tx failed");
         // call transfer ETH  with data return value of function and bool
         bool success;
-        (success, ) = payable(msg.sender).call{value: address(this).balance}(
+        uint256 balance = address(this).balance;
+        (success, ) = payable(msg.sender).call{value: balance}(
             ""
         );
         require(success, "transfer tx failed");
@@ -98,17 +102,19 @@ contract FundMe {
         funderToAmount[msg.sender] = 0;
         // 提款成功了
         getFundSuccess = true;
+        // emit event
+        emit FundWithdrawByOwner(balance);
     }
 
     // 4.在锁定期内没有达到目标值，投资人可以退款
-    function reFund() external windowClosed {
+    function refund() external windowClosed {
         require(
             convertEthToUsd(address(this).balance) < TARGET,
-            "target is reached"
+            "Target is reached"
         );
 
         uint256 amount = funderToAmount[msg.sender];
-        require(amount != 0, "there is not fund for you");
+        require(amount != 0, "there is no fund for you");
         bool success;
         (success, ) = payable(msg.sender).call{
             value: funderToAmount[msg.sender]
@@ -117,6 +123,8 @@ contract FundMe {
 
         // 安全问题：退款后将余额置为0
         funderToAmount[msg.sender] = 0;
+
+        emit RefundByFunder(msg.sender, amount);
     }
 
     // 修改mapping--funderToAmount的地址且仅Erc20有权限
