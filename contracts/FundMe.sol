@@ -11,7 +11,7 @@ contract FundMe {
     // AggregatorV3Interface internal dataFeed;
     AggregatorV3Interface public dataFeed; //先改成public
 
-    uint256 constant TARGET = 100 * 10 ** 18;
+    uint256 public constant TARGET = 100 * 10 ** 18;
 
     address public owner;
     // 时间锁
@@ -79,11 +79,13 @@ contract FundMe {
     function transferOwnerShip(address newOwner) public onlyOwner {
         owner = newOwner;
     }
-
+    uint256 public balance01;//用于debug
+    
     // 3.在锁定期内达到目标值，生产可以提款
     function getFund() external windowClosed onlyOwner {
-        uint256 balance = address(this).balance;
-        require(convertEthToUsd(balance) >= TARGET, "Target is not reached");
+        require(convertEthToUsd(address(this).balance) >= TARGET, "Target is not reached");
+        balance01 = convertEthToUsd(address(this).balance);
+
         //  transfer 纯转账 transfer ETH  and revert if tx failed
         // payable(msg.sender).transfer(address(this).balance);
         // send  纯转账 transfer ETH  and return false if failed
@@ -91,6 +93,7 @@ contract FundMe {
         // require(success, "tx failed");
         // call transfer ETH  with data return value of function and bool
         bool success;
+        uint256 balance = address(this).balance;
         (success, ) = payable(msg.sender).call{value: balance}("");
         require(success, "transfer tx failed");
 

@@ -41,7 +41,7 @@ const { devlopmentChains } = require("../../helper-hardhat-config")
                 await helpers.time.increase(200)//使用increase模拟锁定时间超过200
                 await helpers.mine()//模拟挖矿
                 //value is greater minimum value
-                expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
+                await expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
                     .to.be.revertedWith("window is closed")
             }
         )
@@ -58,7 +58,7 @@ const { devlopmentChains } = require("../../helper-hardhat-config")
                 // greater than minimum
                 await fundMe.fund({ value: ethers.parseEther("0.1") })
                 const balance = await fundMe.funderToAmount(firstAccount)
-                expect(balance).to.equal(ethers.parseEther("0.1"))
+                await expect(balance).to.equal(ethers.parseEther("0.1"))
             }
         )
 
@@ -92,8 +92,8 @@ const { devlopmentChains } = require("../../helper-hardhat-config")
                 // make sure the window is closed
                 await helpers.time.increase(200)
                 await helpers.mine()
-                // console.log('fundMe.getFund()', await fundMe.getFund())
-                // console.log('fundMe', fundMe.amount)
+                // console.log('fundMe', await fundMe.TARGET())
+                // console.log('fundMe', await fundMe.balance01())
                 await expect(fundMe.getFund())
                     .to.be.revertedWith("Target is not reached")
             }
