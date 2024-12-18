@@ -1,7 +1,10 @@
 const { ethers, deployments, getNamedAccounts, network } = require("hardhat")
 const { assert, expect } = require("chai")
 const helpers = require("@nomicfoundation/hardhat-network-helpers")
+const {devlopmentChains} = require("../../helper-hardhat-config")
 
+!devlopmentChains.includes(network.name)
+? describe.skip :
 describe("test fundme contract", async function () {
     let fundMe
     let firstAccount
@@ -11,7 +14,7 @@ describe("test fundme contract", async function () {
         const fundMeDeployment = await deployments.get("FundMe")
         fundMe = await ethers.getContractAt("FundMe", fundMeDeployment.address)
     })
-    
+
 })
 
 // ethers.parseEther 转换成wei为单位的值

@@ -1,7 +1,10 @@
 const { ethers, deployments, getNamedAccounts, network } = require("hardhat")
 const { assert, expect } = require("chai")
 const helpers = require("@nomicfoundation/hardhat-network-helpers")
+const {devlopmentChains} = require("../../helper-hardhat-config")
 
+!devlopmentChains.includes(network.name)
+? describe.skip :
 describe("test fundme contract", async function () {
     let fundMe
     let fundMeSecondAccount
@@ -34,7 +37,7 @@ describe("test fundme contract", async function () {
     it("window closed, value grater than minimum, fund failed",
         async function () {
             // make sure the window is closed
-            await helpers.time.increase(200)//锁定时间超过200
+            await helpers.time.increase(200)//使用increase模拟锁定时间超过200
             await helpers.mine()//模拟挖矿
             //value is greater minimum value
             expect(fundMe.fund({ value: ethers.parseEther("0.1") }))
@@ -140,13 +143,13 @@ describe("test fundme contract", async function () {
 
     it("window closed, target not reached, funder has balance",
         async function () {
-            await fundMe.fund({ value: ethers.parseEther("0.1") })
+            await fundMe.fund({ value: ethers.parseEther("0.01") })
             // make sure the window is closed
             await helpers.time.increase(200)
             await helpers.mine()
             await expect(fundMe.refund())
                 .to.emit(fundMe, "RefundByFunder")
-                .withArgs(firstAccount, ethers.parseEther("0.1"))
+                .withArgs(firstAccount, ethers.parseEther("0.01"))
         }
     )
 })
