@@ -11,6 +11,7 @@ describe("test fundme contract", async function () {
     let firstAccount
     let secondAccount
     let mockV3Aggregator
+    // beforeEach会在每个it执行之前运行一次
     beforeEach(async function () {
         await deployments.fixture(["all"])
         firstAccount = (await getNamedAccounts()).firstAccount

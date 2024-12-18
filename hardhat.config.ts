@@ -25,6 +25,9 @@ const etherToekn1:any = process.env.ETHERSCAN_API_KEY//以太坊浏览器token
 const config = {
   solidity: "0.8.28",
   defaultNetwork: "hardhat",
+  mocha: {
+    timeout: 300000
+  },
   networks: {
     hardhat: {},
     sepolia: {
