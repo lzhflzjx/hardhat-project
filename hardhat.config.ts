@@ -19,8 +19,8 @@ setGlobalDispatcher(proxyAgent);
 
 const privateKey1 = process.env.PRIVATE_KEY_1 as string
 const privateKey2 = process.env.PRIVATE_KEY_2 as string
-const url1 = process.env.SEPOLIA_URL//免费第三方服务商：Alchemy，Infura，QuickNode
-const etherToekn1:any = process.env.ETHERSCAN_API_KEY//以太坊浏览器token
+const url1 = process.env.SEPOLIA_URL //免费第三方服务商：Alchemy，Infura，QuickNode
+const etherToekn1:any = process.env.ETHERSCAN_API_KEY //以太坊浏览器token
 
 const config = {
   solidity: "0.8.28",
